@@ -1,0 +1,2 @@
+*.mjs linguist-language=Node.js
+*.mjs linguist-language=JavaScript
