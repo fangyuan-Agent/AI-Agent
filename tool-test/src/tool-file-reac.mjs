@@ -23,7 +23,7 @@ const readFileTool = tool(
   },
   {
     name: "readFile",
-    description: "用此工具来读取文件内容。当用户要求读取文件、查找代码、分析文件内容时，调用此工具。输入参数为文件路径",
+    description: "用此工具来读取文件内容。当用户要求读取文件、查找代码、分析文件内容时，调用此工具。输入文件路径（可以是相对路径或绝对路径）。",
     schema: z.object({
       filePath: z.string().describe("要读取的文件路径"),
     }),
@@ -46,7 +46,7 @@ const messages = [
     可用工具：
     - readFile: 读取文件内容（使用此工具获取文件内容）
   `),
-  new HumanMessage("请读取文件 ./src/tool-file-reac.mjs 并详细解释代码"),
+  new HumanMessage("请读取文件 ./src/tool-file-reac.mjs 文件内容并详细解释代码"),
 ];
 
 // 调用模型，获取结果
@@ -69,7 +69,7 @@ while (result.tool_calls && result.tool_calls.length > 0) {
       return `工具${toolCall.name}调用失败：${error}`;
     }
   }));
-
+  // 将工具调用结果添加到消息列表，并调用模型，获取结果
   result.tool_calls.forEach((toolCall, index) => {
     messages.push(new ToolMessage({
       content: toolResult[index],
@@ -79,4 +79,4 @@ while (result.tool_calls && result.tool_calls.length > 0) {
   result = await modelWithTools.invoke(messages);
   messages.push(result);
 }
-console.log(`[工具调用]最终结果：${result.content}`);
+console.log(`[工具调用]最终结果：\n${result.content}`);
